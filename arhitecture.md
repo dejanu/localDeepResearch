@@ -14,13 +14,11 @@ flowchart TB
     ORCH["app/orchestrator.py"]
   end
 
-  subgraph pipeline [Research stages]
-    CLAR["app/clarifier.py"]
-    PLAN["app/planner.py"]
-    SUB["app/subagent.py"]
-    SYN["app/synthesizer.py"]
-    TOOLS["app/tools.py"]
-  end
+  CLAR["Clarifier<br/>app/clarifier.py<br/>up to 3 questions"]
+  PLAN["Planner<br/>app/planner.py<br/>sub-questions and sources"]
+  SUB["Sub-agents<br/>app/subagent.py<br/>one loop per sub-question"]
+  SYN["Synthesizer<br/>app/synthesizer.py<br/>one recommendation"]
+  TOOLS["app/tools.py"]
 
   subgraph corpus [Local documents]
     STORE["app/local_docs.py<br/>in-memory store"]
@@ -40,9 +38,11 @@ flowchart TB
   MAIN -->|"startup ingest, /reindex"| STORE
 
   ORCH --> CLAR
-  ORCH --> PLAN
-  ORCH --> SUB
-  ORCH --> SYN
+  CLAR -->|"question is clear"| PLAN
+  CLAR -->|"needs questions"| CLI
+  PLAN --> SUB
+  SUB --> SYN
+  SYN -->|"recommendation"| CLI
 
   CLAR --> ANTH
   PLAN --> ANTH
@@ -56,6 +56,13 @@ flowchart TB
   STORE --> DOCS
   STORE --> CACHE
   STORE -->|"embed chunks and queries"| OLLAMA
+
+  classDef clarifier fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#1e3a8a
+  classDef planner fill:#ffedd5,stroke:#c2410c,stroke-width:2px,color:#7c2d12
+  classDef synthesizer fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#14532d
+  class CLAR clarifier
+  class PLAN planner
+  class SYN synthesizer
 ```
 
 | Component | Role |

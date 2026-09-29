@@ -5,7 +5,7 @@ CLI client included.
 
 ## Setup
 
-### 1. Start the local embedding modmel
+### 1. Start the local embedding model
 
 ```bash
 docker compose up -d
